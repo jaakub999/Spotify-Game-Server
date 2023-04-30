@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spotifygamedb
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: spotify.game12@gmail.com
+    password: spxudemnwknrmhor
+    protocol: smtp
+    auth: true
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          from: spotify.game12@gmail.com
+    debug: false
+
+spotify:
+  client:
+    id: fde3d9ea0288450b928ab3858071e1c8
+    secret: 557cacaaae254e4493485ebb7fb71a29
+
+apiPrefix: /api
+
+app:
+  verification:
+    url: http://localhost:8080#{'${apiPrefix}'}/verify-email
+  jwt:
+    secret: Jg6d2j9GJJ03bMauhsqHpaPePNVr7Lt2
