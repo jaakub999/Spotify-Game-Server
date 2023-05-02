@@ -13,8 +13,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: spotify.game12@gmail.com
-    password: spxudemnwknrmhor
+    username: spotify.game13@gmail.com
+    password: axjozfpzerrliumz
     protocol: smtp
     auth: true
     properties:
@@ -22,7 +22,7 @@ spring:
         smtp:
           starttls:
             enable: true
-          from: spotify.game12@gmail.com
+          from: spotify.game13@gmail.com
     debug: false
 
 spotify:
@@ -34,6 +34,10 @@ apiPrefix: /api
 
 app:
   verification:
-    url: http://localhost:8080#{'${apiPrefix}'}/verify-email
+    url: http://localhost:8080/api/email/register-email
+    location: http://localhost:4200
+  user_password:
+    url: http://localhost:8080/api/email/password-email
+    location: http://localhost:4200/password/
   jwt:
     secret: Jg6d2j9GJJ03bMauhsqHpaPePNVr7Lt2

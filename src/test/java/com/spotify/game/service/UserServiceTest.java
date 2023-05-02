@@ -29,13 +29,4 @@ public class UserServiceTest {
         assertEquals("test@example.com", user.getEmail());
         assertFalse(user.isVerified());
     }
-
-    @Test
-    public void changePasswordTest() {
-        User user = userService.createUser("test_username", "test_password", "test@example.com");
-        userService.changePassword(user.getUsername(), "test_password", "new_password");
-        user = userService.getUserByUsername(user.getUsername()).get();
-
-        assertTrue(passwordEncoder.matches("new_password", user.getPasswordHash()));
-    }
 }

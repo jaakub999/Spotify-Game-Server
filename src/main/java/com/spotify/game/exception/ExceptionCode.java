@@ -14,7 +14,8 @@ public enum ExceptionCode {
     E006("Token has expired"),
     E007("User is already verified"),
     E008("User with that username or email already exists"),
-    E009("Invalid email address");
+    E009("Invalid email address"),
+    E010("Passwords do not match");
 
     private final String code;
 }

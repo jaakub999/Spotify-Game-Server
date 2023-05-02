@@ -7,7 +7,7 @@ import lombok.Data;
 public class ChangePasswordRequest {
 
     @NotNull
-    private String currentPassword;
+    private String token;
 
     @NotNull
     private String newPassword;

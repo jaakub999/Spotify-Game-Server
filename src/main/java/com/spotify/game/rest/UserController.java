@@ -1,5 +1,7 @@
 package com.spotify.game.rest;
 
+import com.spotify.game.exception.ExceptionCode;
+import com.spotify.game.exception.SgRuntimeException;
 import com.spotify.game.model.mapper.UserMapper;
 import com.spotify.game.model.entity.User;
 import com.spotify.game.model.dto.UserDTO;
@@ -14,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import static com.spotify.game.helper.EmailType.*;
+import static org.springframework.http.HttpStatus.ACCEPTED;
+
 @RestController
 @RequestMapping("${apiPrefix}/users")
 public class UserController {
@@ -27,24 +32,20 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserDTO dto) {
+    @ResponseStatus(ACCEPTED)
+    public void registerUser(@RequestBody UserDTO dto) {
         User user = userService.createUser(dto.getUsername(),
                 dto.getPassword(),
                 dto.getEmail());
-        emailService.sendVerificationEmail(user);
-        return ResponseEntity.ok("User registered successfully");
+        emailService.sendEmail(user, REGISTER);
     }
 
-    @PostMapping("/resend-verification-email")
-    public ResponseEntity<?> resendVerificationEmail(@RequestParam("email") String email) {
-        Optional<User> user = userService.getUserByEmail(email);
-
-        if (user.isPresent()) {
-            emailService.sendVerificationEmail(user.get());
-            return ResponseEntity.ok("Verification email sent successfully");
-        }
-
-        else return ResponseEntity.ok("User not found");
+    @PostMapping("/change-password")
+    public void changePassword(@RequestBody @Valid ChangePasswordRequest request) {
+        String token = request.getToken();
+        String newPassword = request.getNewPassword();
+        String confirmNewPassword = request.getConfirmNewPassword();
+        userService.changePassword(token, newPassword, confirmNewPassword);
     }
 
     @GetMapping
@@ -78,17 +79,5 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
         userService.deleteUserById(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/change-password")
-    public ResponseEntity<?> changePassword(Authentication authentication, @RequestBody @Valid ChangePasswordRequest request) {
-        String username = authentication.getName();
-
-        try {
-            userService.changePassword(username, request.getCurrentPassword(), request.getNewPassword());
-            return ResponseEntity.ok("Password changed successfully");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
     }
 }

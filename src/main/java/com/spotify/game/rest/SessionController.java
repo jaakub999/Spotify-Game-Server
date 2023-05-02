@@ -7,13 +7,14 @@ import com.spotify.game.model.entity.Session;
 import com.spotify.game.model.entity.User;
 import com.spotify.game.service.SessionService;
 import com.spotify.game.service.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping("${apiPrefix}/session")
@@ -30,7 +31,7 @@ public class SessionController {
     @PostMapping("/create")
     public Session createSession(@RequestBody UserDTO hostDto) {
         User host = userService.getUserByUsername(hostDto.getUsername()).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with username: " + hostDto.getUsername()));
+                new ResponseStatusException(NOT_FOUND, "User not found with username: " + hostDto.getUsername()));
         return sessionService.createSession(host);
     }
 
@@ -43,7 +44,7 @@ public class SessionController {
     @GetMapping("/{code}")
     public ResponseEntity<SessionDTO> getSession(@PathVariable String code) {
         Session session = sessionService.getSessionByCode(code)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Session not found with code: " + code));
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Session not found with code: " + code));
         SessionDTO dto = SessionMapper.mapSessionToDto(session);
         return ResponseEntity.ok(dto);
     }
@@ -51,7 +52,7 @@ public class SessionController {
     @PostMapping("/{code}/join")
     public ResponseEntity<SessionDTO> joinSession(@RequestBody UserDTO userDto, @PathVariable String code) {
         User user = userService.getUserByUsername(userDto.getUsername()).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with username: " + userDto.getUsername()));
+                new ResponseStatusException(NOT_FOUND, "User not found with username: " + userDto.getUsername()));
 
         sessionService.joinSession(user, code);
 
@@ -61,7 +62,7 @@ public class SessionController {
             SessionDTO dto = SessionMapper.mapSessionToDto(session.get());
             return ResponseEntity.ok(dto);
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Session not found with code: " + code);
+            throw new ResponseStatusException(NOT_FOUND, "Session not found with code: " + code);
         }
     }
 }

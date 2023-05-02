@@ -5,6 +5,7 @@ import com.spotify.game.exception.ExceptionCode;
 import com.spotify.game.model.entity.User;
 import com.spotify.game.repository.UserRepository;
 import com.spotify.game.service.UserService;
+import com.spotify.game.service.VerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,15 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final VerificationService verificationService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder,
+                           VerificationService verificationService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.verificationService = verificationService;
     }
 
     @Override
@@ -84,18 +89,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void changePassword(String username, String currentPassword, String newPassword) {
-        Optional<User> user = getUserByUsername(username);
+    public void changePassword(String token, String newPassword, String confirmNewPassword) {
+        if (!confirmNewPassword.equals(newPassword))
+            throw new SgRuntimeException(ExceptionCode.E010);
+
+        String email = verificationService.getEmailByToken(token);
+        Optional<User> user = getUserByEmail(email);
 
         if (user.isPresent()) {
             User userEntity = user.get();
-
-            if (!passwordEncoder.matches(currentPassword, userEntity.getPasswordHash()))
-                throw new IllegalArgumentException("Current password is incorrect");
-
             userEntity.setPasswordHash(passwordEncoder.encode(newPassword));
             userRepository.save(userEntity);
         }
+
+
     }
 
     private void handleExistingUser(Optional<User> existingUser, String value) {

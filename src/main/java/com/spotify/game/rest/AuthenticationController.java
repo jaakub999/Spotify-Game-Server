@@ -7,8 +7,6 @@ import com.spotify.game.security.JwtTokenProvider;
 import com.spotify.game.service.AuthenticationService;
 import com.spotify.game.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestController
 @RequestMapping("${apiPrefix}/login")
@@ -45,13 +47,13 @@ public class AuthenticationController {
             if (authService.isUserVerified(username)) {
                 String token = jwtTokenProvider.generateToken(user.get());
                 return ResponseEntity.ok()
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(AUTHORIZATION, "Bearer " + token)
                         .body(new AuthResponse(token));
             }
 
-            else return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not verified");
+            else return ResponseEntity.status(FORBIDDEN).body("User is not verified");
         }
 
-        else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        else return ResponseEntity.status(UNAUTHORIZED).body("Invalid username or password");
     }
 }
