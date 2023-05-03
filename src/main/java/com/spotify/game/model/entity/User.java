@@ -1,5 +1,7 @@
 package com.spotify.game.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,6 +31,7 @@ public class User {
     @Column(name = "verified", nullable = false)
     private boolean verified;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "session_id")
     private Session session;
@@ -41,6 +44,7 @@ public class User {
     )
     private List<GameHistory> gameHistories;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Score> scores;
 }

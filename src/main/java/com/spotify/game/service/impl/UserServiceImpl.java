@@ -1,7 +1,6 @@
 package com.spotify.game.service.impl;
 
 import com.spotify.game.exception.SgRuntimeException;
-import com.spotify.game.exception.ExceptionCode;
 import com.spotify.game.model.entity.User;
 import com.spotify.game.repository.UserRepository;
 import com.spotify.game.service.UserService;
@@ -13,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.spotify.game.exception.ExceptionCode.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -45,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
         String regex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
         if (!email.matches(regex)) {
-            throw new SgRuntimeException(ExceptionCode.E009);
+            throw new SgRuntimeException(E009);
         }
 
         User user = new User();
@@ -67,19 +68,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> getUserById(Long id) throws SgRuntimeException {
         return Optional.ofNullable(userRepository.findById(id)
-                .orElseThrow(() -> new SgRuntimeException(ExceptionCode.E001)));
+                .orElseThrow(() -> new SgRuntimeException(E001)));
     }
 
     @Override
     public Optional<User> getUserByUsername(String username) {
         return Optional.ofNullable(userRepository.findByUsername(username)
-                .orElseThrow(() -> new SgRuntimeException(ExceptionCode.E001)));
+                .orElseThrow(() -> new SgRuntimeException(E001)));
     }
 
     @Override
     public Optional<User> getUserByEmail(String email) {
         return Optional.ofNullable(userRepository.findByEmail(email)
-                .orElseThrow(() -> new SgRuntimeException(ExceptionCode.E001)));
+                .orElseThrow(() -> new SgRuntimeException(E001)));
     }
 
     @Override
@@ -91,7 +92,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void changePassword(String token, String newPassword, String confirmNewPassword) {
         if (!confirmNewPassword.equals(newPassword))
-            throw new SgRuntimeException(ExceptionCode.E010);
+            throw new SgRuntimeException(E010);
 
         String email = verificationService.getEmailByToken(token);
         Optional<User> user = getUserByEmail(email);
@@ -109,7 +110,7 @@ public class UserServiceImpl implements UserService {
         if (existingUser.isPresent()) {
             User user = existingUser.get();
             if (user.isVerified()) {
-                throw new SgRuntimeException(ExceptionCode.E008);
+                throw new SgRuntimeException(E008);
             } else {
                 userRepository.deleteByUsername(value);
                 userRepository.deleteByEmail(value);

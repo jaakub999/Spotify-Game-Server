@@ -5,40 +5,32 @@ import com.spotify.game.model.dto.UserDTO;
 import com.spotify.game.model.mapper.SessionMapper;
 import com.spotify.game.model.entity.Session;
 import com.spotify.game.model.entity.User;
+import com.spotify.game.service.AuthenticationService;
 import com.spotify.game.service.SessionService;
 import com.spotify.game.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Optional;
 
+import static com.spotify.game.security.SecurityConstants.HEADER;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping("${apiPrefix}/session")
+@AllArgsConstructor
 public class SessionController {
 
     private final SessionService sessionService;
     private final UserService userService;
-
-    public SessionController(SessionService sessionService, UserService userService) {
-        this.sessionService = sessionService;
-        this.userService = userService;
-    }
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/create")
-    public Session createSession(@RequestBody UserDTO hostDto) {
-        User host = userService.getUserByUsername(hostDto.getUsername()).orElseThrow(() ->
-                new ResponseStatusException(NOT_FOUND, "User not found with username: " + hostDto.getUsername()));
-        return sessionService.createSession(host);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<SessionDTO>> getAllSessions() {
-        List<Session> sessions = sessionService.getAllSessions();
-        return ResponseEntity.ok(SessionMapper.mapSessionsListToDto(sessions));
+    public ResponseEntity<Session> createSession(@RequestHeader(HEADER) String token) {
+        User user = authenticationService.getUserByToken(token);
+        return ResponseEntity.ok(sessionService.createSession(user));
     }
 
     @GetMapping("/{code}")

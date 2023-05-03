@@ -1,6 +1,5 @@
 package com.spotify.game.service.impl;
 
-import com.spotify.game.exception.ExceptionCode;
 import com.spotify.game.exception.SgRuntimeException;
 import com.spotify.game.helper.EmailType;
 import com.spotify.game.model.entity.User;
@@ -16,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.spotify.game.exception.ExceptionCode.*;
 import static com.spotify.game.helper.EmailType.REGISTER;
 
 @Service
@@ -48,17 +48,17 @@ public class VerificationServiceImpl implements VerificationService {
     @Transactional
     public void verifyToken(String token, EmailType emailType) {
         Optional<VerificationToken> verificationToken = Optional.ofNullable(verificationRepository.findByToken(token)
-                .orElseThrow(() -> new SgRuntimeException(ExceptionCode.E005)));
+                .orElseThrow(() -> new SgRuntimeException(E005)));
 
         if (verificationToken.isPresent()) {
             VerificationToken tokenEntity = verificationToken.get();
             checkToken(tokenEntity);
             User user = userRepository.findByEmail(tokenEntity.getEmail())
-                    .orElseThrow(() -> new SgRuntimeException(ExceptionCode.E001));
+                    .orElseThrow(() -> new SgRuntimeException(E001));
 
             if (emailType == REGISTER) {
                 if (user.isVerified())
-                    throw new SgRuntimeException(ExceptionCode.E007);
+                    throw new SgRuntimeException(E007);
 
                 user.setVerified(true);
                 userRepository.save(user);
@@ -66,7 +66,7 @@ public class VerificationServiceImpl implements VerificationService {
             }
         }
 
-        else throw new SgRuntimeException(ExceptionCode.E005);
+        else throw new SgRuntimeException(E005);
     }
 
     @Override
@@ -82,13 +82,13 @@ public class VerificationServiceImpl implements VerificationService {
             return email;
         }
 
-        else throw new SgRuntimeException(ExceptionCode.E005);
+        else throw new SgRuntimeException(E005);
     }
 
     private void checkToken(VerificationToken token) {
         if (token.getExpirationTime().isBefore(LocalDateTime.now())) {
             verificationRepository.delete(token);
-            throw new SgRuntimeException(ExceptionCode.E006);
+            throw new SgRuntimeException(E006);
         }
     }
 }

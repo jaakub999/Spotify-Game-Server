@@ -15,7 +15,9 @@ public enum ExceptionCode {
     E007("User is already verified"),
     E008("User with that username or email already exists"),
     E009("Invalid email address"),
-    E010("Passwords do not match");
+    E010("Passwords do not match"),
+    E011("JWT token date expired"),
+    E012("JWT token is invalid");
 
-    private final String code;
+    private final String message;
 }

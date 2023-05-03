@@ -9,11 +9,10 @@ import com.spotify.game.request.ChangePasswordRequest;
 import com.spotify.game.service.EmailService;
 import com.spotify.game.service.UserService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.spotify.game.helper.EmailType.*;
@@ -21,15 +20,11 @@ import static org.springframework.http.HttpStatus.ACCEPTED;
 
 @RestController
 @RequestMapping("${apiPrefix}/users")
+@AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final EmailService emailService;
-
-    public UserController(UserService userService, EmailService emailService) {
-        this.userService = userService;
-        this.emailService = emailService;
-    }
 
     @PostMapping("/register")
     @ResponseStatus(ACCEPTED)
@@ -40,18 +35,12 @@ public class UserController {
         emailService.sendEmail(user, REGISTER);
     }
 
-    @PostMapping("/change-password")
+    @PostMapping("/change-forgotten-password")
     public void changePassword(@RequestBody @Valid ChangePasswordRequest request) {
         String token = request.getToken();
         String newPassword = request.getNewPassword();
         String confirmNewPassword = request.getConfirmNewPassword();
         userService.changePassword(token, newPassword, confirmNewPassword);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(UserMapper.mapUsersListToDto(users));
     }
 
     @GetMapping("/{id}")

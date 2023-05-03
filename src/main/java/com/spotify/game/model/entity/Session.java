@@ -1,10 +1,12 @@
 package com.spotify.game.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -26,6 +28,7 @@ public class Session {
     @Column(name = "code", unique = true, nullable = false)
     private String code;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<User> players;
+    private List<User> players = new ArrayList<>();
 }

@@ -1,5 +1,6 @@
 package com.spotify.game.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,6 +33,7 @@ public class GameHistory {
     )
     private List<User> users;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "gameHistory", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Score> scores;
 }

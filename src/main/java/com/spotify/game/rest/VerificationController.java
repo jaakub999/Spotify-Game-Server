@@ -5,6 +5,7 @@ import com.spotify.game.properties.AppProperties;
 import com.spotify.game.service.EmailService;
 import com.spotify.game.service.UserService;
 import com.spotify.game.service.VerificationService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,22 +20,13 @@ import static org.springframework.http.HttpStatus.FOUND;
 
 @RestController
 @RequestMapping("${apiPrefix}/email")
+@AllArgsConstructor
 public class VerificationController {
 
     private final VerificationService verificationService;
     private final UserService userService;
     private final EmailService emailService;
     private final AppProperties appProperties;
-
-    public VerificationController(VerificationService verificationService,
-                                  UserService userService,
-                                  EmailService emailService,
-                                  AppProperties appProperties) {
-        this.verificationService = verificationService;
-        this.userService = userService;
-        this.emailService = emailService;
-        this.appProperties = appProperties;
-    }
 
     @GetMapping("/register-email")
     public ResponseEntity<String> verifyRegisterEmail(@RequestParam("token") String token) {

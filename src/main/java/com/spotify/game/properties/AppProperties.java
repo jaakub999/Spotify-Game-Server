@@ -21,5 +21,9 @@ public class AppProperties {
     @Data
     public static class Jwt {
         private String secret;
+
+        public byte[] getSecretAsBytes() {
+            return secret.getBytes();
+        }
     }
 }

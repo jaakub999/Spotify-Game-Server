@@ -1,6 +1,5 @@
 package com.spotify.game.service.impl;
 
-import com.spotify.game.exception.ExceptionCode;
 import com.spotify.game.exception.SgRuntimeException;
 import com.spotify.game.model.entity.Session;
 import com.spotify.game.model.entity.User;
@@ -16,6 +15,8 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.spotify.game.exception.ExceptionCode.E004;
 
 @Service
 public class SessionServiceImpl implements SessionService {
@@ -49,7 +50,6 @@ public class SessionServiceImpl implements SessionService {
         host = entityManager.merge(host);
         session.setHost(host.getUsername());
         session.setCode(code);
-        session.setPlayers(new ArrayList<>());
         session.getPlayers().add(host);
         session.setStarted(false);
 
@@ -64,7 +64,7 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public Optional<Session> getSessionByCode(String code) {
         return Optional.ofNullable(sessionRepository.findByCode(code)
-                .orElseThrow(() -> new SgRuntimeException(ExceptionCode.E004)));
+                .orElseThrow(() -> new SgRuntimeException(E004)));
     }
 
     @Override
@@ -90,7 +90,7 @@ public class SessionServiceImpl implements SessionService {
             sessionRepository.save(currentSession);
         }
 
-        else throw new SgRuntimeException(ExceptionCode.E004);
+        else throw new SgRuntimeException(E004);
     }
 
     private String generateCode() {
