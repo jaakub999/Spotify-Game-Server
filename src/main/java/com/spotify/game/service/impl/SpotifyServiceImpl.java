@@ -2,6 +2,7 @@ package com.spotify.game.service.impl;
 
 import com.spotify.game.properties.SpotifyProperties;
 import com.spotify.game.service.SpotifyService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.core5.http.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Service
 public class SpotifyServiceImpl implements SpotifyService {
 
@@ -27,6 +29,7 @@ public class SpotifyServiceImpl implements SpotifyService {
         this.spotifyProperties = spotifyProperties;
     }
 
+    @Override
     public List<PlaylistSimplified> getPlaylistsByName(String query) {
         if (query != null && !query.isEmpty()) {
             try {
@@ -56,7 +59,14 @@ public class SpotifyServiceImpl implements SpotifyService {
 
     private List<PlaylistSimplified> searchPlaylists(SpotifyApi spotifyApi, String query) throws IOException, SpotifyWebApiException, ParseException {
         SearchPlaylistsRequest request = spotifyApi.searchPlaylists(query).build();
-        Paging<PlaylistSimplified> playlists = request.execute();
-        return List.of(playlists.getItems());
+        Paging<PlaylistSimplified> playlistsPaging = request.execute();
+        List<PlaylistSimplified> playlists = List.of(playlistsPaging.getItems());
+        List<String> names = playlists.stream()
+                .map(PlaylistSimplified::getName)
+                .toList();
+
+        log.info("Spotify playlists found: " + names);
+
+        return playlists;
     }
 }
