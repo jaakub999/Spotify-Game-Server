@@ -10,6 +10,7 @@ import com.spotify.game.service.SessionService;
 import com.spotify.game.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,6 +27,7 @@ public class SessionController {
     private final SessionService sessionService;
     private final UserService userService;
     private final AuthenticationService authenticationService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/create")
     public ResponseEntity<Session> createSession(@RequestHeader(HEADER) String token) {
@@ -41,20 +43,12 @@ public class SessionController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping("/{code}/join")
-    public ResponseEntity<SessionDTO> joinSession(@RequestBody UserDTO userDto, @PathVariable String code) {
-        User user = userService.getUserByUsername(userDto.getUsername()).orElseThrow(() ->
-                new ResponseStatusException(NOT_FOUND, "User not found with username: " + userDto.getUsername()));
+    @PostMapping("/join")
+    public void joinSession(@RequestHeader(HEADER) String token, @RequestParam("code") String code) {
+        User user = authenticationService.getUserByToken(token);
+        Session session = sessionService.joinSession(user, code);
+        SessionDTO dto = SessionMapper.mapSessionToDto(session);
 
-        sessionService.joinSession(user, code);
-
-        Optional<Session> session = sessionService.getSessionByCode(code);
-
-        if (session.isPresent()) {
-            SessionDTO dto = SessionMapper.mapSessionToDto(session.get());
-            return ResponseEntity.ok(dto);
-        } else {
-            throw new ResponseStatusException(NOT_FOUND, "Session not found with code: " + code);
-        }
+        messagingTemplate.convertAndSend("/topic/session", dto);
     }
 }

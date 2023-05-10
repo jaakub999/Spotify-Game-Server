@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,18 +67,8 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public List<Session> getAllSessions() {
-        return sessionRepository.findAll();
-    }
-
-    @Override
-    public void deleteSessionById(Long id) {
-        sessionRepository.deleteById(id);
-    }
-
-    @Override
     @Transactional
-    public void joinSession(User user, String code) {
+    public Session joinSession(User user, String code) {
         Optional<Session> session = sessionRepository.findByCode(code);
 
         if (session.isPresent()) {
@@ -88,6 +77,8 @@ public class SessionServiceImpl implements SessionService {
             session.get().getPlayers().add(user);
             userRepository.save(user);
             sessionRepository.save(currentSession);
+
+            return session.get();
         }
 
         else throw new SgRuntimeException(E004);

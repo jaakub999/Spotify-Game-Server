@@ -12,9 +12,5 @@ public interface SessionService {
 
     Optional<Session> getSessionByCode(String code);
 
-    List<Session> getAllSessions();
-
-    void joinSession(User user, String code);
-
-    void deleteSessionById(Long id);
+    Session joinSession(User user, String code);
 }
