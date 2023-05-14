@@ -1,10 +1,7 @@
 package com.spotify.game.rest;
 
-import com.spotify.game.exception.ExceptionCode;
-import com.spotify.game.exception.SgRuntimeException;
-import com.spotify.game.model.mapper.UserMapper;
-import com.spotify.game.model.entity.User;
 import com.spotify.game.model.dto.UserDTO;
+import com.spotify.game.model.entity.User;
 import com.spotify.game.request.ChangePasswordRequest;
 import com.spotify.game.service.EmailService;
 import com.spotify.game.service.UserService;
@@ -15,12 +12,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-import static com.spotify.game.helper.EmailType.*;
+import static com.spotify.game.helper.EmailType.REGISTER;
+import static com.spotify.game.model.mapper.UserMapper.mapUserToDto;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("${apiPrefix}/users")
-@AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
@@ -46,21 +44,21 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         Optional<User> user = userService.getUserById(id);
-        return user.map(u -> ResponseEntity.ok(UserMapper.mapUserToDto(u)))
+        return user.map(u -> ResponseEntity.ok(mapUserToDto(u)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping ("/{username}")
     public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) {
         Optional<User> user = userService.getUserByUsername(username);
-        return user.map(u -> ResponseEntity.ok(UserMapper.mapUserToDto(u)))
+        return user.map(u -> ResponseEntity.ok(mapUserToDto(u)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{email}")
     public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
         Optional<User> user = userService.getUserByEmail(email);
-        return user.map(u -> ResponseEntity.ok(UserMapper.mapUserToDto(u)))
+        return user.map(u -> ResponseEntity.ok(mapUserToDto(u)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

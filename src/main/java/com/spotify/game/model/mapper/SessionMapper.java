@@ -15,8 +15,9 @@ public class SessionMapper {
     public static SessionDTO mapSessionToDto(Session source) {
         return SessionDTO.builder()
                 .host(source.getHost())
-                .started(source.isStarted())
                 .code(source.getCode())
+                .playlistId(source.getPlaylistId())
+                .tracks(source.getTracks())
                 .playerIds(source.getPlayers().stream().map(User::getId).collect(Collectors.toList()))
                 .build();
     }

@@ -35,16 +35,4 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "session_id")
     private Session session;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_history",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "game_history_id")}
-    )
-    private List<GameHistory> gameHistories;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Score> scores;
 }

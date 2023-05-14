@@ -3,6 +3,7 @@ package com.spotify.game.service;
 import com.spotify.game.exception.SgRuntimeException;
 import com.spotify.game.model.entity.Session;
 import com.spotify.game.model.entity.User;
+import com.spotify.game.repository.SessionRepository;
 import com.spotify.game.repository.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +23,9 @@ public class SessionServiceTest {
     private SessionService sessionService;
 
     @Autowired
+    private SessionRepository sessionRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Test
@@ -34,19 +38,12 @@ public class SessionServiceTest {
 
         Session session = sessionService.createSession(user);
         String code = session.getCode();
-        Optional<Session> retrievedSession = sessionService.getSessionByCode(code);
+        Optional<Session> retrievedSession = sessionRepository.findByCode(code);
 
         assertTrue(retrievedSession.isPresent());
         assertEquals(session.getId(), retrievedSession.get().getId());
         assertEquals(user.getUsername(), session.getHost());
         assertEquals(1, session.getPlayers().size());
-    }
-
-    @Test
-    public void getSessionByCodeTest() {
-        String nonexistentCode = "12345";
-
-        assertThrows(SgRuntimeException.class, () -> sessionService.getSessionByCode(nonexistentCode));
     }
 
     @Test
@@ -65,8 +62,15 @@ public class SessionServiceTest {
 
         Session session = sessionService.createSession(host);
         sessionService.joinSession(player, session.getCode());
-        session = sessionService.getSessionByCode(session.getCode()).get();
+        session = sessionRepository.findByCode(session.getCode()).get();
 
         assertEquals(2, session.getPlayers().size());
+    }
+
+    @Test
+    public void getSessionByCodeTest() {
+        String nonexistentCode = "123456";
+
+        assertThrows(SgRuntimeException.class, () -> sessionService.getSessionByCode(nonexistentCode));
     }
 }

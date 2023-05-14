@@ -9,7 +9,8 @@ import java.util.List;
 @Builder
 public class SessionDTO {
     private String host;
-    private boolean started;
     private String code;
+    private String playlistId;
+    private Integer tracks;
     private List<Long> playerIds;
 }

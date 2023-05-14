@@ -23,9 +23,9 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("${apiPrefix}/login")
-@AllArgsConstructor
 public class AuthenticationController {
 
     private final AuthenticationService authService;

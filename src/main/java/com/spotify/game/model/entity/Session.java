@@ -22,11 +22,14 @@ public class Session {
     @Column(name = "host", nullable = false)
     private String host;
 
-    @Column(name = "started", nullable = false)
-    private boolean started;
-
     @Column(name = "code", unique = true, nullable = false)
     private String code;
+
+    @Column(name = "playlist_id")
+    private String playlistId;
+
+    @Column(name = "number_of_tracks")
+    private Integer tracks;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

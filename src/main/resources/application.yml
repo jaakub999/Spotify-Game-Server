@@ -1,3 +1,6 @@
+apiPrefix: /api
+allowed-origin: http://localhost:4200
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/spotifygamedb
@@ -29,8 +32,6 @@ spotify:
   client:
     id: fde3d9ea0288450b928ab3858071e1c8
     secret: 557cacaaae254e4493485ebb7fb71a29
-
-apiPrefix: /api
 
 app:
   verification:

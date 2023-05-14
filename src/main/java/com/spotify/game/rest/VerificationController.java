@@ -18,9 +18,9 @@ import static com.spotify.game.helper.EmailType.*;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.FOUND;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("${apiPrefix}/email")
-@AllArgsConstructor
 public class VerificationController {
 
     private final VerificationService verificationService;

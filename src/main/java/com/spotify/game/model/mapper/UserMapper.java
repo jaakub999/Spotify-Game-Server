@@ -16,9 +16,6 @@ public class UserMapper {
                 .password(source.getPasswordHash())
                 .email(source.getEmail())
                 .verified(source.isVerified())
-                .sessionId(source.getSession() != null ? source.getSession().getId() : null)
-                .gameHistories(source.getGameHistories().isEmpty() ? null : source.getGameHistories())
-                .scores(source.getScores().isEmpty() ? null : source.getScores())
                 .build();
     }
 

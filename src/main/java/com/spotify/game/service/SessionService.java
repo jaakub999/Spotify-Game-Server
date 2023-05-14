@@ -3,14 +3,15 @@ package com.spotify.game.service;
 import com.spotify.game.model.entity.Session;
 import com.spotify.game.model.entity.User;
 
-import java.util.List;
-import java.util.Optional;
-
 public interface SessionService {
 
     Session createSession(User host);
 
-    Optional<Session> getSessionByCode(String code);
+    void joinSession(User user, String code);
 
-    Session joinSession(User user, String code);
+    void updateSession(String code, String playlist, int tracks);
+
+    Session getSessionByCode(String code);
+
+    void deleteSessionByCode(String code);
 }
