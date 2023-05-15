@@ -2,13 +2,11 @@ package com.spotify.game.model.mapper;
 
 import com.spotify.game.model.dto.SessionDTO;
 import com.spotify.game.model.entity.Session;
-import com.spotify.game.model.entity.User;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import static com.spotify.game.model.mapper.UserMapper.mapUsersListToDto;
+import static com.spotify.game.model.mapper.TrackGroupMapper.mapTrackGroupsListToDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SessionMapper {
@@ -17,19 +15,10 @@ public class SessionMapper {
                 .host(source.getHost())
                 .code(source.getCode())
                 .playlistId(source.getPlaylistId())
-                .tracks(source.getTracks())
-                .playerIds(source.getPlayers().stream().map(User::getId).collect(Collectors.toList()))
+                .active(source.getActive())
+                .date(source.getDate())
+                .players(mapUsersListToDto(source.getPlayers()))
+                .tracks(mapTrackGroupsListToDto(source.getTrackGroups()))
                 .build();
-    }
-
-    public static List<SessionDTO> mapSessionsListToDto(List<Session> source) {
-        List<SessionDTO> sessionDTOs = new ArrayList<>();
-
-        for (Session session : source) {
-            SessionDTO dto = mapSessionToDto(session);
-            sessionDTOs.add(dto);
-        }
-
-        return sessionDTOs;
     }
 }

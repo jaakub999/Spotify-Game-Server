@@ -27,6 +27,6 @@ public class UserServiceTest {
         assertNotNull(user.getId());
         assertEquals("test_username", user.getUsername());
         assertEquals("test@example.com", user.getEmail());
-        assertFalse(user.isVerified());
+        assertFalse(user.getVerified());
     }
 }

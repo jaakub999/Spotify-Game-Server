@@ -9,7 +9,6 @@ import com.spotify.game.service.AuthenticationService;
 import com.spotify.game.service.SessionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import static com.spotify.game.model.mapper.SessionMapper.mapSessionToDto;
@@ -22,7 +21,6 @@ public class SessionController {
 
     private final SessionService sessionService;
     private final AuthenticationService authenticationService;
-    private final SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/create")
     public ResponseEntity<SessionDTO> createSession(@RequestHeader(HEADER) String token) {
@@ -35,7 +33,7 @@ public class SessionController {
     @GetMapping("/{code}")
     public ResponseEntity<SessionResponse> getSession(@RequestHeader(HEADER) String token, @PathVariable String code) {
         User user = authenticationService.getUserByToken(token);
-        Session session = sessionService.getSessionByCode(code);
+        Session session = sessionService.getSession(code);
         return ResponseEntity.ok(new SessionResponse(mapSessionToDto(session), user.getUsername()));
     }
 
@@ -48,14 +46,14 @@ public class SessionController {
     @PostMapping("/update")
     public void updateSessionData(@RequestBody SessionRequest request) {
         sessionService.updateSession(
-                request.getSession(),
-                request.getPlaylist(),
-                request.getTracks()
+                request.getSessionCode(),
+                request.getPlaylistId(),
+                request.getTracksNumber()
         );
     }
 
-    @DeleteMapping("/delete")
-    public void deleteSession(@RequestParam String code) {
-        sessionService.deleteSessionByCode(code);
+    @PostMapping("/deactivate")
+    public void deactivateSession(@RequestParam String code) {
+        sessionService.deactivateSession(code);
     }
 }

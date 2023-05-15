@@ -9,9 +9,9 @@ public interface SessionService {
 
     void joinSession(User user, String code);
 
-    void updateSession(String code, String playlist, int tracks);
+    void updateSession(String code, String playlistId, int number);
 
-    Session getSessionByCode(String code);
+    Session getSession(String code);
 
-    void deleteSessionByCode(String code);
+    void deactivateSession(String code);
 }

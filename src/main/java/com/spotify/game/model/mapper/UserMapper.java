@@ -15,7 +15,7 @@ public class UserMapper {
                 .username(source.getUsername())
                 .password(source.getPasswordHash())
                 .email(source.getEmail())
-                .verified(source.isVerified())
+                .verified(source.getVerified())
                 .build();
     }
 

@@ -17,7 +17,8 @@ public enum ExceptionCode {
     E009("Invalid email address"),
     E010("Passwords do not match"),
     E011("JWT token date expired"),
-    E012("JWT token is invalid");
+    E012("JWT token is invalid"),
+    E013("An error occurred during fetching Spotify tracks");
 
     private final String message;
 }

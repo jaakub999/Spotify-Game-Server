@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.spotify.game.exception.ExceptionCode.*;
@@ -49,20 +48,17 @@ public class UserServiceImpl implements UserService {
             throw new SgRuntimeException(E009);
         }
 
-        User user = new User();
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setVerified(false);
         String encryptedPassword = passwordEncoder.encode(password);
-        user.setPasswordHash(encryptedPassword);
+        User user = User.builder()
+                .username(username)
+                .email(email)
+                .verified(false)
+                .passwordHash(encryptedPassword)
+                .build();
 
         userRepository.save(user);
-        return user;
-    }
 
-    @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return user;
     }
 
     @Override
@@ -109,7 +105,7 @@ public class UserServiceImpl implements UserService {
     private void handleExistingUser(Optional<User> existingUser, String value) {
         if (existingUser.isPresent()) {
             User user = existingUser.get();
-            if (user.isVerified()) {
+            if (user.getVerified()) {
                 throw new SgRuntimeException(E008);
             } else {
                 userRepository.deleteByUsername(value);

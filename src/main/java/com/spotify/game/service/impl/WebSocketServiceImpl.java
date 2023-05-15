@@ -17,6 +17,6 @@ public class WebSocketServiceImpl implements WebSocketService {
 
     @Override
     public void sendMessage(String topicSuffix) {
-        messagingTemplate.convertAndSend("/topic/" + topicSuffix, "Default message from WS service");
+        messagingTemplate.convertAndSend("/topic/" + topicSuffix, "Default message from WebSocketService");
     }
 }

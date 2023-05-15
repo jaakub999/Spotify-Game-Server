@@ -7,11 +7,11 @@ import lombok.Data;
 public class SessionRequest {
 
     @NotNull
-    private String session;
+    private String sessionCode;
 
     @NotNull
-    private String playlist;
+    private String playlistId;
 
     @NotNull
-    private Integer tracks;
+    private Integer tracksNumber;
 }

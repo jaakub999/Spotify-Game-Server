@@ -12,26 +12,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "tracks")
+public class InternalTrack {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", nullable = false)
-    private String username;
+    @Column(name = "uri", nullable = false)
+    private String uri;
 
-    @Column(name = "password", nullable = false)
-    private String passwordHash;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-    @Column(name = "email", nullable = false)
-    private String email;
+    @Column(name = "artist", nullable = false)
+    private String artist;
 
-    @Column(name = "verified", nullable = false)
-    private Boolean verified;
+    @Column(name = "played", nullable = false)
+    private Boolean played;
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "session_id")
-    private Session session;
+    @JoinColumn(name = "track_group_id")
+    private TrackGroup trackGroup;
 }

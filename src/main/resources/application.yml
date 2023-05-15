@@ -1,5 +1,6 @@
+server: http://localhost:8080
+origin: http://localhost:4200
 apiPrefix: /api
-allowed-origin: http://localhost:4200
 
 spring:
   datasource:
@@ -35,10 +36,10 @@ spotify:
 
 app:
   verification:
-    url: http://localhost:8080/api/email/register-email
-    location: http://localhost:4200
+    url: ${server}${apiPrefix}/email/register-email
+    location: ${origin}
   user_password:
-    url: http://localhost:8080/api/email/password-email
-    location: http://localhost:4200/password/
+    url: ${server}${apiPrefix}/email/password-email
+    location: ${origin}/password/
   jwt:
     secret: Jg6d2j9GJJ03bMauhsqHpaPePNVr7Lt2

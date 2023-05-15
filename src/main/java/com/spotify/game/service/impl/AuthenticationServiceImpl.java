@@ -43,7 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public boolean isUserVerified(String username) {
         Optional<User> user = userService.getUserByUsername(username);
-        return user.map(User::isVerified).orElse(false);
+        return user.map(User::getVerified).orElse(false);
     }
 
     @Override

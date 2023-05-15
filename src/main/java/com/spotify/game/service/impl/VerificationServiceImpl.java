@@ -34,10 +34,11 @@ public class VerificationServiceImpl implements VerificationService {
     public VerificationToken generateVerificationToken(String email) {
         String token = UUID.randomUUID().toString();
         LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(15);
-        VerificationToken verificationToken = new VerificationToken();
-        verificationToken.setToken(token);
-        verificationToken.setEmail(email);
-        verificationToken.setExpirationTime(expirationTime);
+        VerificationToken verificationToken = VerificationToken.builder()
+                .token(token)
+                .email(email)
+                .expirationTime(expirationTime)
+                .build();
 
         verificationRepository.save(verificationToken);
 
@@ -57,7 +58,7 @@ public class VerificationServiceImpl implements VerificationService {
                     .orElseThrow(() -> new SgRuntimeException(E001));
 
             if (emailType == REGISTER) {
-                if (user.isVerified())
+                if (user.getVerified())
                     throw new SgRuntimeException(E007);
 
                 user.setVerified(true);

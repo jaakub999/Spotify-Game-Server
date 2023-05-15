@@ -10,6 +10,4 @@ import java.util.Optional;
 public interface SessionRepository extends JpaRepository<Session, Long> {
 
     Optional<Session> findByCode(String code);
-
-    void deleteByCode(String code);
 }
