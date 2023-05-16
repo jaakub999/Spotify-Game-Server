@@ -78,6 +78,7 @@ public class SessionServiceImpl implements SessionService {
                 .active(true)
                 .date(LocalDateTime.now())
                 .players(new ArrayList<>())
+                .trackGroups(new ArrayList<>())
                 .build();
 
         session.getPlayers().add(host);
@@ -89,59 +90,49 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    @Transactional
-    public void joinSession(User user, String code) {
-        Optional<Session> session = sessionRepository.findByCode(code);
-
-        if (session.isPresent()) {
-            Session currentSession = session.get();
-            user.setSession(currentSession);
-            currentSession.getPlayers().add(user);
-            userRepository.save(user);
-            sessionRepository.save(currentSession);
-            String topic = "session/join/" + code;
-            notifyFrontend(topic);
-        }
-
-        else throw new SgRuntimeException(E004);
-    }
-
-    @Override
-    @Transactional
-    public void updateSession(String code, String playlistId, int number) {
-        Optional<Session> session = sessionRepository.findByCode(code);
-
-        if (session.isPresent()) {
-            Session currentSession = session.get();
-            Map<Integer, Map<Track, Boolean>> tracks = spotifyService.getPlaylistTracks(playlistId, number);
-            List<TrackGroup> trackGroups = createTrackGroups(tracks, currentSession);
-            currentSession.setPlaylistId(playlistId);
-            currentSession.setTrackGroups(trackGroups);
-            sessionRepository.save(currentSession);
-            String topic = "session/start/" + code;
-            notifyFrontend(topic);
-        }
-
-        else throw new SgRuntimeException(E004);
-    }
-
-    @Override
     public Session getSession(String code) {
         return sessionRepository.findByCode(code)
                 .orElseThrow(() -> new SgRuntimeException(E004));
     }
 
     @Override
-    public void deactivateSession(String code) {
-        Optional<Session> session = sessionRepository.findByCode(code);
+    @Transactional
+    public void joinSession(User user, String code) {
+        Session session = getSession(code);
+        user.setSession(session);
+        session.getPlayers().add(user);
+        userRepository.save(user);
+        sessionRepository.save(session);
+        String topic = "session/join/" + code;
+        notifyFrontend(topic);
+    }
 
-        if (session.isPresent()) {
-            Session currentSession = session.get();
-            currentSession.setActive(false);
-            sessionRepository.save(currentSession);
-            String topic = "session/delete/" + code;
-            notifyFrontend(topic);
-        }
+    @Override
+    @Transactional
+    public void updateSession(String code, String playlistId, int number) {
+        Session session = getSession(code);
+        Map<Integer, Map<Track, Boolean>> tracks = spotifyService.getPlaylistTracks(playlistId, number);
+        List<TrackGroup> trackGroups = createTrackGroups(tracks, session);
+        session.setPlaylistId(playlistId);
+        session.setTrackGroups(trackGroups);
+        sessionRepository.save(session);
+        String topic = "session/start/" + code;
+        notifyFrontend(topic);
+    }
+
+    @Override
+    public List<TrackGroup> getSessionTrackGroups(String code) {
+        Session session = getSession(code);
+        return session.getTrackGroups();
+    }
+
+    @Override
+    public void deactivateSession(String code) {
+        Session session = getSession(code);
+        session.setActive(false);
+        sessionRepository.save(session);
+        String topic = "session/delete/" + code;
+        notifyFrontend(topic);
     }
 
     private String generateCode() {
@@ -162,6 +153,7 @@ public class SessionServiceImpl implements SessionService {
         List<TrackGroup> trackGroups = new ArrayList<>();
 
         for (Map.Entry<Integer, Map<Track, Boolean>> outerEntry : tracks.entrySet()) {
+            List<InternalTrack> internalTracks = new ArrayList<>();
             Map<Track, Boolean> innerMap = outerEntry.getValue();
             TrackGroup group = new TrackGroup();
 
@@ -178,13 +170,15 @@ public class SessionServiceImpl implements SessionService {
 
                 group.getTracks().add(internalTrack);
                 internalTrack.setTrackGroup(group);
-                internalTrackRepository.save(internalTrack);
+                internalTracks.add(internalTrack);
             }
 
             group.setSession(session);
-            trackGroupRepository.save(group);
+            internalTrackRepository.saveAll(internalTracks);
             trackGroups.add(group);
         }
+
+        trackGroupRepository.saveAll(trackGroups);
 
         return trackGroups;
     }

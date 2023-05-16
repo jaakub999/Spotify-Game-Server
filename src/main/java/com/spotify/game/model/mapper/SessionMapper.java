@@ -18,7 +18,7 @@ public class SessionMapper {
                 .active(source.getActive())
                 .date(source.getDate())
                 .players(mapUsersListToDto(source.getPlayers()))
-                .tracks(mapTrackGroupsListToDto(source.getTrackGroups()))
+                .trackGroups(mapTrackGroupsListToDto(source.getTrackGroups()))
                 .build();
     }
 }

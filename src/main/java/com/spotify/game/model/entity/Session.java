@@ -37,11 +37,9 @@ public class Session {
     @Column(name = "date")
     private LocalDateTime date;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<User> players = new ArrayList<>();
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<TrackGroup> trackGroups = new ArrayList<>();
 }

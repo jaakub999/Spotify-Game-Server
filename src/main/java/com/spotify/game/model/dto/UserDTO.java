@@ -10,5 +10,4 @@ public class UserDTO {
     private String password;
     private String email;
     private Boolean verified;
-    private Long sessionId;
 }

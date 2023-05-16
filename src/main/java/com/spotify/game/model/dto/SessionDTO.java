@@ -15,5 +15,5 @@ public class SessionDTO {
     private Boolean active;
     private LocalDateTime date;
     private List<UserDTO> players;
-    private List<TrackGroupDTO> tracks;
+    private List<TrackGroupDTO> trackGroups;
 }

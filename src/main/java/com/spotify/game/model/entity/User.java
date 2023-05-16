@@ -30,7 +30,6 @@ public class User {
     @Column(name = "verified", nullable = false)
     private Boolean verified;
 
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "session_id")
     private Session session;

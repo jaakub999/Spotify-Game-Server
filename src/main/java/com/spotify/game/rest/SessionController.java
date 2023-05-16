@@ -1,17 +1,23 @@
 package com.spotify.game.rest;
 
 import com.spotify.game.model.dto.SessionDTO;
+import com.spotify.game.model.dto.TrackGroupDTO;
 import com.spotify.game.model.entity.Session;
+import com.spotify.game.model.entity.TrackGroup;
 import com.spotify.game.model.entity.User;
 import com.spotify.game.request.SessionRequest;
 import com.spotify.game.response.SessionResponse;
 import com.spotify.game.service.AuthenticationService;
 import com.spotify.game.service.SessionService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.spotify.game.model.mapper.SessionMapper.mapSessionToDto;
+import static com.spotify.game.model.mapper.TrackGroupMapper.mapTrackGroupsListToDto;
 import static com.spotify.game.security.SecurityConstants.HEADER;
 
 @AllArgsConstructor
@@ -43,8 +49,14 @@ public class SessionController {
         sessionService.joinSession(user, code);
     }
 
+    @GetMapping("/{code}/tracks")
+    public List<TrackGroupDTO> getSessionTracks(@PathVariable String code) {
+        List<TrackGroup> trackGroups = sessionService.getSessionTrackGroups(code);
+        return mapTrackGroupsListToDto(trackGroups);
+    }
+
     @PostMapping("/update")
-    public void updateSessionData(@RequestBody SessionRequest request) {
+    public void updateSessionData(@RequestBody @Valid SessionRequest request) {
         sessionService.updateSession(
                 request.getSessionCode(),
                 request.getPlaylistId(),

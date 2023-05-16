@@ -1,6 +1,5 @@
 package com.spotify.game.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +29,6 @@ public class InternalTrack {
     @Column(name = "played", nullable = false)
     private Boolean played;
 
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "track_group_id")
     private TrackGroup trackGroup;

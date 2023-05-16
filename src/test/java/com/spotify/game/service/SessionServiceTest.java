@@ -28,9 +28,6 @@ public class SessionServiceTest {
     private SessionService sessionService;
 
     @Autowired
-    private SessionRepository sessionRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Test
@@ -46,10 +43,10 @@ public class SessionServiceTest {
 
         Session session = sessionService.createSession(user);
         String code = session.getCode();
-        Optional<Session> retrievedSession = sessionRepository.findByCode(code);
+        Session retrievedSession = sessionService.getSession(code);
 
-        assertTrue(retrievedSession.isPresent());
-        assertEquals(session.getId(), retrievedSession.get().getId());
+        assertNotNull(retrievedSession);
+        assertEquals(session.getId(), retrievedSession.getId());
         assertEquals(user.getUsername(), session.getHost());
         assertEquals(1, session.getPlayers().size());
     }
@@ -75,7 +72,7 @@ public class SessionServiceTest {
 
         Session session = sessionService.createSession(host);
         sessionService.joinSession(player, session.getCode());
-        session = sessionRepository.findByCode(session.getCode()).get();
+        session = sessionService.getSession(session.getCode());
 
         assertEquals(2, session.getPlayers().size());
     }
@@ -89,7 +86,7 @@ public class SessionServiceTest {
 
     @Test
     public void updateSessionTest() {
-        final String playlistId = "37i9dQZF1EQpj7X7UK8OOF";
+        final String playlistId = "12sAmcR8cRDrWaAJqmEJyq";
         final int number = 3;
         User user = User.builder()
                 .username("testuserforsessiontests3")

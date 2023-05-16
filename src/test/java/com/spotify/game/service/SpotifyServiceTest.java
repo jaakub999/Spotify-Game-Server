@@ -18,7 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SpotifyServiceTest {
 
     @Autowired
-    SpotifyService spotifyService;
+    private SpotifyService spotifyService;
+
+    @Autowired
+    private SpotifyOAuthService spotifyOAuthService;
 
     @Test
     public void getPlaylistsByNameWithValidQueryTest() {
@@ -52,5 +55,12 @@ public class SpotifyServiceTest {
 
         assertNotNull(tracks);
         assertFalse(tracks.isEmpty());
+    }
+
+    @Test
+    public void getAccessTokenTest() {
+        String token = spotifyOAuthService.getAccessToken();
+
+        assertNotNull(token);
     }
 }
