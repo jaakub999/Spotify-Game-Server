@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "sessions")
+@Table(name = "sessions", indexes = @Index(columnList = "code"))
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

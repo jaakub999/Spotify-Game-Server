@@ -2,6 +2,7 @@ package com.spotify.game.rest;
 
 import com.spotify.game.model.dto.SessionDTO;
 import com.spotify.game.model.dto.TrackGroupDTO;
+import com.spotify.game.model.entity.InternalTrack;
 import com.spotify.game.model.entity.Session;
 import com.spotify.game.model.entity.TrackGroup;
 import com.spotify.game.model.entity.User;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.spotify.game.model.mapper.SessionMapper.mapSessionToDto;
@@ -50,9 +52,20 @@ public class SessionController {
     }
 
     @GetMapping("/{code}/tracks")
-    public List<TrackGroupDTO> getSessionTracks(@PathVariable String code) {
+    public List<String> getSessionTracks(@PathVariable String code) {
         List<TrackGroup> trackGroups = sessionService.getSessionTrackGroups(code);
-        return mapTrackGroupsListToDto(trackGroups);
+        List<String> tracks = new ArrayList<>();
+
+        for (TrackGroup trackGroup : trackGroups) {
+            for (var j = 0; j < trackGroup.getTracks().size(); j++) {
+                InternalTrack track = trackGroup.getTracks().get(j);
+
+                if (track.getPlayed())
+                    tracks.add(track.getName() + " - " + track.getArtist());
+            }
+        }
+
+        return tracks;
     }
 
     @PostMapping("/update")
